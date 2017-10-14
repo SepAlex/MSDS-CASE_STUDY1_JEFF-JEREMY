@@ -1,9 +1,14 @@
+
+setwd("~/LocalGitHubFiles/MSDS-CASE_STUDY1_JEFF-JEREMY")
+
+getwd()
+
 #Loading In data file ex0525.csv
-Beers <- read.csv('C:/Users/Prodigy/Documents/Personal Info/SMU/MSDS 6306 - Doing Data Science/Case Study 1/Beers.csv',header = T,sep = ",")
+Beers <- read.csv('Beers.csv',header = T,sep = ",")
 head(Beers)
 str(Beers)
 
-Brew <- read.csv('C:/Users/Prodigy/Documents/Personal Info/SMU/MSDS 6306 - Doing Data Science/Case Study 1/Breweries.csv',header = T,sep = ",")
+Brew <- read.csv('Breweries.csv',header = T,sep = ",")
 colnames(Brew) <- c("Brewery_id","Brewery Name","City","State")
 head(Brew)
 str(Brew)
