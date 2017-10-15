@@ -19,7 +19,7 @@
 library(plyr)
 
 ## Initialize Directories
-setwd("~/LocalGitHubFiles/MSDS-CASE_STUDY1_JEFF-JEREMY")
+setwd("~/Users/Prodigy/Documents/GitRepositories/MSDS-CASE_STUDY1_JEFF-JEREMY")
 getwd()
 
 ##Loading In data file ex0525.csv
@@ -46,6 +46,8 @@ names(BrewMap) <-c("state","Breweries")
 BrewMap$state <- trimws(BrewMap$state)
 us.regions <- read.csv('US_Regions.csv',header = T,sep = ",")
 BrewMap <- merge(BrewMap,us.regions, by="state",all=TRUE)
+
+Breweries.by.state <- read.csv("C:/Users/Prodigy/Documents/GitRepositories/MSDS-CASE_STUDY1_JEFF-JEREMY/US-Regions.csv")
 
 library(ggplot2)
 library(fiftystater)
@@ -104,12 +106,6 @@ BrewMedians <- tidyr::gather(Medians.By.State, "Category", "Value", 2:3)
 ggplot(BrewMedians, aes(x = Category, y = Value)) + 
   geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ State)
 
-Medians.By.State <- Medians.By.State[order(Medians.By.State$IBU),]
-
-ggplot(Medians.By.State, aes(x = State, y = IBU)) + 
-  #geom_bar(stat = 'identity') +
-  geom_line(aes(x=State, y=ABV*max(Medians.By.State$IBU)),stat="identity")
-
 
 class(BrewbyState)
 major_count[ order(major_count$freq),]
@@ -119,52 +115,19 @@ colnames(Breweries.By.State) <- c('State', 'Count')
 Breweries.By.State <- Breweries.By.State[order(Breweries.By.State$Count, decreasing = FALSE), ]
 
 
-## Code for this double stacked bar graph comes from Stackoverflow.com on a post from Didzis Elferts
-## https://stackoverflow.com/questions/18265941/two-horizontal-bar-charts-with-shared-axis-in-ggplot2-similar-to-population-pyr
-## https://stackoverflow.com/users/1857266/didzis-elferts
 
-library(grid)
-g.mid<-ggplot(Medians.By.State,aes(x=1,y=State))+geom_text(aes(label=State))+
-  geom_segment(aes(x=0.94,xend=0.96,yend=State))+
-  geom_segment(aes(x=1.04,xend=1.065,yend=State))+
-  ggtitle("States")+
-  ylab(NULL)+
-  scale_x_continuous(expand=c(0,0),limits=c(0.94,1.065))+
-  theme(axis.title=element_blank(),
-        panel.grid=element_blank(),
-        axis.text.y=element_blank(),
-        axis.ticks.y=element_blank(),
-        panel.background=element_blank(),
-        axis.text.x=element_text(color=NA),
-        axis.ticks.x=element_line(color=NA),
-        plot.margin = unit(c(1,-1,1,-1), "mm"))
-#Both original plots are modified. First, removed the y axis for the second plot and also made left/right margin to -1.
+par(las=1, mai= c(.5, .8, 1.5, .5), mgp= c(1, 2.2, 0))
 
-g1 <- ggplot(data = Medians.By.State, aes(x = State, y = ABV)) +
-  geom_bar(stat = "identity") + ggtitle("                Median ABV") +
-  theme(axis.title.x = element_blank(), 
-        axis.title.y = element_blank(), 
-        axis.text.y = element_blank(), 
-        axis.ticks.y = element_blank(), 
-        plot.margin = unit(c(1,-1,1,0), "mm")) +
-  scale_y_reverse() + coord_flip()
-
-g2 <- ggplot(data = Medians.By.State, aes(x = State, y = IBU)) +xlab(NULL)+
-  geom_bar(stat = "identity") + ggtitle("           Median IBU") +
-  theme(axis.title.x = element_blank(), axis.title.y = element_blank(), 
-        axis.text.y = element_blank(), axis.ticks.y = element_blank(),
-        plot.margin = unit(c(1,0,1,-1), "mm")) +
-  coord_flip()
-#Now use library gridExtra and function d grid.arrange() to join plots. Before plotting all plots are made as grobs.
-
-library(gridExtra)
-gg1 <- ggplot_gtable(ggplot_build(g1))
-gg2 <- ggplot_gtable(ggplot_build(g2))
-gg.mid <- ggplot_gtable(ggplot_build(g.mid))
-
-grid.arrange(gg1,gg.mid,gg2,ncol=3,widths=c(4/9,1/9,4/9))
-
-
+barplot(
+        Breweries.By.State$Count,
+        names.arg = Breweries.By.State$State,
+        main="Main",
+        xlab="X Label",
+        ylab="Y Label",
+        horiz = TRUE,
+        las=1,
+        ylim = c(0,51),
+        cex.names=0.75)
 
 ## 5. Which state has the maximum alcoholic (ABV) beer? Which state 
 ##  has the most bitter (IBU) beer?
