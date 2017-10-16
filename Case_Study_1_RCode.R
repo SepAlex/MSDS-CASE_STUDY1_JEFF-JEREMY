@@ -63,7 +63,7 @@ Mapplot <- ggplot(BrewMap, aes(map_id = region)) +
        title = "Breweries by State",
        x = "",
        y = "") +
-  scale_fill_continuous(low = "thistle2", high = "darkred", guide="colorbar")+
+  scale_fill_continuous(low = "orange", high = "darkred", guide="colorbar")+
   theme(legend.position = "bottom", 
         panel.background = element_blank()) +
   # add border boxes to AK/HI
