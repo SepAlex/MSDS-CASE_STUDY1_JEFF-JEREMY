@@ -16,24 +16,21 @@
 ##  beer and its alcoholic content? Draw a scatter plot.
 #########################################################
 
-library(plyr)
-
 ## Initialize Directories
-setwd("~/LocalGitHubFiles/MSDS-CASE_STUDY1_JEFF-JEREMY")
-getwd()
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-##Loading In data file ex0525.csv
+##Loading In data file Beers.csv 
 Beers <- read.csv('Beers.csv',header = T,sep = ",")
-head(Beers)
-str(Beers)
+#head(Beers)
+#str(Beers)
 
+## Loading in data file Breweries.csv. File contains information
+## about Brewerey's Name, Unique ID number, City and State of Headquarters
 Brew <- read.csv('Breweries.csv',header = T,sep = ",")
 colnames(Brew) <- c("Brewery_id","Brewery Name","City","State")
-head(Brew)
-str(Brew)
- 
+#head(Brew)
+#str(Brew)
 
-apply(apply(BrewMerged, 2, trimws), 2, sum)
 
 ## 1. How many breweries are present in each state?
 
@@ -52,7 +49,7 @@ library(fiftystater)
 library(mapproj)
 
 # map_id creates the aesthetic mapping to the state name column in your data
-Mapplot <- ggplot(BrewMap, aes(map_id = region)) + 
+Mapplot <- ggplot(BrewMap, aes(map_id = region))+ 
   # map points to the fifty_states shape data
   geom_map(aes(fill = Breweries), map = fifty_states) + 
   expand_limits(x = fifty_states$long, y = fifty_states$lat) +
@@ -60,7 +57,7 @@ Mapplot <- ggplot(BrewMap, aes(map_id = region)) +
   scale_x_continuous(breaks = NULL) + 
   scale_y_continuous(breaks = NULL) +
   labs(fill = "Brewery\nQuantity",
-       title = "Breweries by State",
+       title = "           Fig 1.2 Breweries by State",
        x = "",
        y = "") +
   scale_fill_continuous(low = "orange", high = "darkred", guide="colorbar")+
