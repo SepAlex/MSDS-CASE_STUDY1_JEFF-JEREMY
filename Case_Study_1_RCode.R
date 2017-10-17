@@ -37,20 +37,27 @@ colnames(Brew) <- c("Brewery_id","Brewery Name","City","State")
 BrewbyState <- table(Brew$State)
 BrewbyState
 
+
 ########  Map of USA with Brewery Quantities ########
 BrewMap <- as.data.frame(BrewbyState)
 names(BrewMap) <-c("state","Breweries")
 BrewMap$state <- trimws(BrewMap$state)
 us.regions <- read.csv('US_Regions.csv',header = T,sep = ",")
 BrewMap <- merge(BrewMap,us.regions, by="state",all=TRUE)
+# BrewMapWest <- subset(BrewMap, Country_Region=="West")
+# BrewMapMidwest <- subset(BrewMap, Country_Region=="Midwest")
+# BrewMapSouth <- subset(BrewMap, Country_Region=="South")
+# BrewMapNortheast <- subset(BrewMap, Country_Region=="Northeast")
 
 library(ggplot2)
 library(fiftystater)
 library(mapproj)
 
-# map_id creates the aesthetic mapping to the state name column in your data
+# Creates a mapping of the United states with varying degrees of shading
+# depending on data values in dataframe 
 Mapplot <- ggplot(BrewMap, aes(map_id = region))+ 
-  # map points to the fifty_states shape data
+  
+# map points to the fifty_states shape data
   geom_map(aes(fill = Breweries), map = fifty_states) + 
   expand_limits(x = fifty_states$long, y = fifty_states$lat) +
   coord_map() +
@@ -63,8 +70,9 @@ Mapplot <- ggplot(BrewMap, aes(map_id = region))+
   scale_fill_continuous(low = "orange", high = "darkred", guide="colorbar")+
   theme(legend.position = "bottom", 
         panel.background = element_blank()) +
-  # add border boxes to AK/HI
+# add border boxes to AK/HI
   fifty_states_inset_boxes()
+# Plots Map
 Mapplot
 
 ################################################
@@ -74,11 +82,13 @@ Mapplot
 
 BrewMerged <- merge(Brew,Beers, by="Brewery_id",all=TRUE)
 
-print("First 6 brewery observations")
-head(BrewMerged, 6)
+# First 6 Brewery Observations
+kable(head(BrewMerged,6), align="c", caption = "First 6 Observation of BrewMerged Dataframe",format="markdown")
 
-print("Last 6 brewery observations")
-tail(BrewMerged, 6)
+# Last 6 Brewery Observations
+kable(head(BrewMerged,6), align="c", caption = "Last 6 Observation of BrewMerged Dataframe",format="markdown")
+
+
 
 ## 3. Report the number of NA's in each column.
 
