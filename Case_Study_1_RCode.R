@@ -16,8 +16,16 @@
 ##  beer and its alcoholic content? Draw a scatter plot.
 #########################################################
 
+library(knitr)
+library(ggplot2)
+library(fiftystater)
+library(mapproj)
+library(tidyr)
+library(grid)
+library(gridExtra)
+
 ## Initialize Directories
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+#setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 ##Loading In data file Beers.csv 
 Beers <- read.csv('Beers.csv',header = T,sep = ",")
@@ -31,11 +39,13 @@ colnames(Brew) <- c("Brewery_id","Brewery Name","City","State")
 #head(Brew)
 #str(Brew)
 
-
 ## 1. How many breweries are present in each state?
 
 BrewbyState <- table(Brew$State)
 BrewbyState
+#colnames(BrewbyState) <- c("State","Quantity")
+#kable(BrewbyState, align="c", caption = "Quantity of Breweries by State",format="markdown")
+
 
 
 ########  Map of USA with Brewery Quantities ########
@@ -49,9 +59,7 @@ BrewMap <- merge(BrewMap,us.regions, by="state",all=TRUE)
 # BrewMapSouth <- subset(BrewMap, Country_Region=="South")
 # BrewMapNortheast <- subset(BrewMap, Country_Region=="Northeast")
 
-library(ggplot2)
-library(fiftystater)
-library(mapproj)
+
 
 # Creates a mapping of the United states with varying degrees of shading
 # depending on data values in dataframe 
@@ -89,7 +97,6 @@ kable(head(BrewMerged,6), align="c", caption = "First 6 Observation of BrewMerge
 kable(head(BrewMerged,6), align="c", caption = "Last 6 Observation of BrewMerged Dataframe",format="markdown")
 
 
-
 ## 3. Report the number of NA's in each column.
 
 apply(apply(BrewMerged, 2, is.na), 2, sum)
@@ -105,7 +112,6 @@ Medians.By.State <- aggregate(BrewMerged$ABV, list(BrewMerged$State), median, na
 names(Medians.By.State) <- c("State", "ABV")
 Medians.By.State$IBU <- aggregate(BrewMerged$IBU, list(BrewMerged$State), median, na.rm=TRUE)$x
 
-library(tidyr)
 BrewMedians <- tidyr::gather(Medians.By.State, "Category", "Value", 2:3)
 
 ggplot(BrewMedians, aes(x = Category, y = Value)) + 
@@ -130,7 +136,6 @@ Breweries.By.State <- Breweries.By.State[order(Breweries.By.State$Count, decreas
 ## https://stackoverflow.com/questions/18265941/two-horizontal-bar-charts-with-shared-axis-in-ggplot2-similar-to-population-pyr
 ## https://stackoverflow.com/users/1857266/didzis-elferts
 
-library(grid)
 g.mid<-ggplot(Medians.By.State,aes(x=1,y=State))+geom_text(aes(label=State))+
   geom_segment(aes(x=0.94,xend=0.96,yend=State))+
   geom_segment(aes(x=1.04,xend=1.065,yend=State))+
@@ -164,7 +169,6 @@ g2 <- ggplot(data = Medians.By.State, aes(x = State, y = IBU)) +xlab(NULL)+
   coord_flip()
 #Now use library gridExtra and function d grid.arrange() to join plots. Before plotting all plots are made as grobs.
 
-library(gridExtra)
 gg1 <- ggplot_gtable(ggplot_build(g1))
 gg2 <- ggplot_gtable(ggplot_build(g2))
 gg.mid <- ggplot_gtable(ggplot_build(g.mid))
