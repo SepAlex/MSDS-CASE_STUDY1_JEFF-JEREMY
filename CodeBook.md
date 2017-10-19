@@ -4,8 +4,8 @@ CodeBook for MSDS 6306: CaseStudy 01
 
 Original Data
 ---------------
-The original source of the datasets is unknown.  The original dataset was obtained by GPIF from 
-- [source](Openbeerdb.com https://openbeerdb.com/)
+The original dataset was obtained by GPIF from Openbeerdb.com 
+- [Openbeer.com](https://openbeerdb.com/)
 The databases were made available under the Open Database License agreement.
 Note: The original databases were altered by GPIF prior to submission to CDS.
 
@@ -16,14 +16,14 @@ Processing code and dataset variable naming follows the conventions described in
 [Google R Styde Guide](http://google-styleguide.googlecode.com/svn/trunk/Rguide.xml).
 
 
-Data sets
+Dataset(s)
 ------------
-Beers dataset (Beers.csv)
-Breweries dataset (Breweries.csv)
+Beers dataset (Beers.csv)  
+Breweries dataset (Breweries.csv)  
 US State/Regions dataset (US_Regions.csv)
 
 
-Raw dataset
+Raw Dataset(s)
 ------------
 Beers dataset (Beers.csv):
 The Beers dataset contains a list of 2410 US craft beers currently being produced in the US, along
@@ -41,7 +41,7 @@ Census_Regions_and_Division_of_the_United_States map.
 - [source](https://commons.wikimedia.org/wiki/File:Census_Regions_and_Division_of_the_United_States.svg)
 
 
-Tidy data set
+Tidy Dataset
 -----------------
 Tidy data set contains merged datasets (Beers.csv | Breweries.csv), using Brewery_id as the unique
 identifier.

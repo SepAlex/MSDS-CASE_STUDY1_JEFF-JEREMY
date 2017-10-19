@@ -16,6 +16,9 @@
 ##  beer and its alcoholic content? Draw a scatter plot.
 #########################################################
 
+## Initialize Directories
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
 library(knitr)
 library(ggplot2)
 library(fiftystater)
@@ -24,28 +27,25 @@ library(tidyr)
 library(grid)
 library(gridExtra)
 
-## Initialize Directories
-#setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 ##Loading In data file Beers.csv 
 Beers <- read.csv('Beers.csv',header = T,sep = ",")
-#head(Beers)
-#str(Beers)
+
 
 ## Loading in data file Breweries.csv. File contains information
 ## about Brewerey's Name, Unique ID number, City and State of Headquarters
 Brew <- read.csv('Breweries.csv',header = T,sep = ",")
 colnames(Brew) <- c("Brewery_id","Brewery Name","City","State")
-#head(Brew)
-#str(Brew)
+
 
 ## 1. How many breweries are present in each state?
 
 BrewbyState <- table(Brew$State)
 BrewbyState
-#colnames(BrewbyState) <- c("State","Quantity")
-#kable(BrewbyState, align="c", caption = "Quantity of Breweries by State",format="markdown")
 
+#BrewbyStateS <- as.data.frame(BrewbyState)
+#colnames(BrewbyStateS) <- c("State","Quantity")
+#kable(BrewbyStateS, align="c", caption = "Table 1.1 Quantity of Brew by State",format="markdown")
 
 
 ########  Map of USA with Brewery Quantities ########
@@ -91,17 +91,17 @@ Mapplot
 BrewMerged <- merge(Brew,Beers, by="Brewery_id",all=TRUE)
 
 # First 6 Brewery Observations
-kable(head(BrewMerged,6), align="c", caption = "First 6 Observation of BrewMerged Dataframe",format="markdown")
+kable(head(BrewMerged,6), align="c", caption = "Table 1.2a BrewMerged Dataset First 6 Observations",format="markdown",row.names = FALSE)
 
 # Last 6 Brewery Observations
-kable(head(BrewMerged,6), align="c", caption = "Last 6 Observation of BrewMerged Dataframe",format="markdown")
+kable(tail(BrewMerged,6), align="c", caption = "Table 1.2b BrewMerged Dataset Last 6 Observations",format="markdown",row.names = FALSE)
 
 
 ## 3. Report the number of NA's in each column.
 
 NAs <- as.data.frame(apply(apply(BrewMerged, 2, is.na), 2, sum))
 colnames(NAs) <- "Missing Values"
-kable(NAs, align="c", caption = "Table 1.3 Number of Missing observations",format="markdown")
+kable(NAs, align="c", caption = "Table 1.3 Number of Missing observations",format="markdown",row.names = FALSE)
 
 ## 4. Compute the median alcohol content and international bitterness 
 ##  unit for each state. Plot a bar chart to compare.
@@ -116,18 +116,15 @@ Medians.By.State$IBU <- aggregate(BrewMerged$IBU, list(BrewMerged$State), median
 
 BrewMedians <- tidyr::gather(Medians.By.State, "Category", "Value", 2:3)
 
-ggplot(BrewMedians, aes(x = Category, y = Value)) + 
-  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ State)
+#ggplot(BrewMedians, aes(x = Category, y = Value)) + 
+#  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ State)
 
 Medians.By.State <- Medians.By.State[order(Medians.By.State$IBU),]
 
-ggplot(Medians.By.State, aes(x = State, y = IBU)) + 
-  #geom_bar(stat = 'identity') +
-  geom_line(aes(x=State, y=ABV*max(Medians.By.State$IBU)),stat="identity")
+#ggplot(Medians.By.State, aes(x = State, y = IBU)) + 
+#geom_bar(stat = 'identity') +
+#  geom_line(aes(x=State, y=ABV*max(Medians.By.State$IBU)),stat="identity")
 
-
-class(BrewbyState)
-major_count[ order(major_count$freq),]
 
 Breweries.By.State <- as.data.frame(BrewbyState)
 colnames(Breweries.By.State) <- c('State', 'Count')
@@ -183,7 +180,6 @@ grid.arrange(gg1,gg.mid,gg2,ncol=3,widths=c(4/9,1/9,4/9))
 ABVmax <- BrewMerged[ which.max(BrewMerged$ABV), ]
 kable(ABVmax[,c(4,2,5,7)], align="c", caption = "State with Maximum alcohol content (ABV) beer",format="markdown")
 
-#print("State with Maximum International Bitterness Units beer (IBU)")
 IBUmax <- BrewMerged[ which.max(BrewMerged$IBU), ]
 kable(IBUmax[,c(4,2,5,8)], align="c", caption = "State with Maximum International Bitterness Unit (IBU) beer",format="markdown")
 
@@ -200,6 +196,32 @@ library(ggplot2)
 ggplot(BrewMerged, aes(IBU, ABV))+ geom_point() + geom_smooth(method=lm,  se=FALSE) 
 
 
+## Conclusion ##
 
+BrewMapTarget <- subset(BrewMap, Breweries >= 20)
+
+# States with 20 or more Breweries
+kable(BrewMapTarget[,c(1,2,5)], align="c", caption = "First 6 Observation of BrewMerged Dataframe",format="markdown",row.names = FALSE)
+
+
+# Creates a segmented map of United States, displaying states with greater
+# than 20 breweries 
+MapTarget <- ggplot(BrewMapTarget, aes(map_id = region))+ 
+  
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = Breweries), map = fifty_states) + 
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) + 
+  scale_y_continuous(breaks = NULL) +
+  labs(fill = "Brewery\nQuantity",
+       title = "           Fig 7.1 Targeted States\n                with >20 Breweries",
+       x = "",
+       y = "") +
+  scale_fill_continuous(low = "orange", high = "darkred", guide="colorbar")+
+  theme(legend.position = "bottom", 
+        panel.background = element_blank())
+# Plots Map
+MapTarget
 
 

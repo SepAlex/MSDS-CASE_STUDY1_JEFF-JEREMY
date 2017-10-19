@@ -29,7 +29,7 @@ For reproducibility across a wide variety of computer operating platforms, CDS c
 The datasets were received in csv format.  A preliminary review of the files showed that the data was well organized and rather complete.  
 First, we used the Breweries dataset and developed a summary table listing the number of breweries in each state.  As seen in the Table 1.1 Breweries by State, there is a wide range of number of breweries by state. Colorado leads the way with 47 breweries with California a distant 2nd with 39.  Several states only had 1 brewery.
 
-```{r, LoadingFiles, warning=FALSE}
+```{r DirectorySet, eval=FALSE}
 #########################################################
 ## DDS - Case Study 1
 ## Jeffrey Lancon & Jeremy Lubich
@@ -46,7 +46,12 @@ First, we used the Breweries dataset and developed a summary table listing the n
 ## 6. Summary statistics for the ABV variable.
 ## 7. Is there an apparent relationship between the bitterness of the 
 ##  beer and its alcoholic content? Draw a scatter plot.
-#########################################################
+########################################################
+## Initialize Directories
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+```
+
+```{r LoadingFiles}
 library(knitr)
 library(ggplot2)
 library(fiftystater)
@@ -56,33 +61,27 @@ library(grid)
 library(gridExtra)
 library(kableExtra)
 
-## Initialize Directories
-#setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 ##Loading In data file Beers.csv 
 Beers <- read.csv('Beers.csv',header = T,sep = ",")
-#head(Beers)
-#str(Beers)
 
-## Loading in data file Breweries.csv. File contains information
-## about Brewerey's Name, Unique ID number, City and State of Headquarters
+## Loading in data file Breweries.csv. File contains information about Brewerey's Name, Unique ID number, City and State of Headquarters
 Brew <- read.csv('Breweries.csv',header = T,sep = ",")
 colnames(Brew) <- c("Brewery_id","Brewery Name","City","State")
-#head(Brew)
-#str(Brew)
+
 
 ## 1. How many breweries are present in each state?
 
 BrewbyState <- table(Brew$State)
-BrewbyStateS <- as.data.frame(BrewbyState)
-colnames(BrewbyStateS) <- c("State","Quantity")
-#kable(BrewbyState, align="c", padding=0, caption = "Quantity of Breweries by State",format="markdown")
-kable(BrewbyStateS, format = "Rmarkdown", caption = "Demo table", booktabs = T) %>%
-kable_styling(latex_options = c("striped", "scale_down"),full_width = F)
+BrewbyState
+
+#BrewbyStateS <- as.data.frame(BrewbyState)
+#colnames(BrewbyStateS) <- c("State","Quantity")
+#kable(BrewbyStateS, align="c", caption = "Table 1.1 Quantity of Brew by State",format="markdown")
 
 ```
 Visualization of the data introduces another dimension to the data.  Figure 1.1 Breweries by State is a color-coded map, displaying the number of breweries in each state by varying shades of coloring.  As you can see from the map, the West Coast, and Northeast US, have the most craft breweries, with Colorado and Texas being outliers in the Western and Southern regions.  Further breakdowns, by US regions are available if requested.  
-```{r, USmap, warning=FALSE}
+```{r USmap}
 
 ########  Map of USA with Brewery Quantities ########
 BrewMap <- as.data.frame(BrewbyState)
@@ -120,7 +119,7 @@ Mapplot
 
 CDS merged the datasets together, to get a more robust dataset, which includes information about brewery, location, beers produced, alcohol content (ABV), bitterness (IBU), style, size (ounces). For quality control purposes, the first six rows (Table 1.2a) of and the last six rows (Table 1.2b) of the combined dataset are displayed below.  
 
-```{r, mergeddataset}
+```{r mergeddataset}
 ################################################
 
 ## 2. Merge beer data with the breweries data. Print the first 6 
@@ -129,22 +128,22 @@ CDS merged the datasets together, to get a more robust dataset, which includes i
 BrewMerged <- merge(Brew,Beers, by="Brewery_id",all=TRUE)
 
 # First 6 Brewery Observations
-kable(head(BrewMerged,6), align="c", caption = "Table 1.2a BrewMerged Dataset First 6 Observations",format="markdown")
+kable(head(BrewMerged,6), align="c", caption = "Table 1.2a BrewMerged Dataset First 6 Observations",format="markdown",row.names = FALSE)
 ```
 ```{r, last6}
 # Last 6 Brewery Observations
-kable(head(BrewMerged,6), align="c", caption = "Table 1.2b BrewMerged Dataset Last 6 Observations",format="markdown")
+kable(tail(BrewMerged,6), align="c", caption = "Table 1.2b BrewMerged Dataset Last 6 Observations",format="markdown",row.names = FALSE)
 ```
 
 A check of the dataset's robustness/completeness was conducted.  Table 1.3 list each variable and the number of NA (Not Available/missing) data points is listed.  Most of the variables have no missing data. ABV (alcohol content) has 62 missing values while IBU (bitterness units) has 1005 missing values.   Bitterness units is not a typically used criteria in the US, which might explain the large number of missing values.  Any analysis using IBU must be viewed with caution.  
 
-```{r, NAvalues}
+```{r NAvalues}
 
 ## 3. Report the number of NA's in each column.
 
 NAs <- as.data.frame(apply(apply(BrewMerged, 2, is.na), 2, sum))
 colnames(NAs) <- "Missing Values"
-kable(NAs, align="c", caption = "Table 1.3 Number of Missing observations",format="markdown")
+kable(NAs, align="c", caption = "Table 1.3 Number of Missing observations",format="markdown",row.names = FALSE)
 ```
 
 Consumers taste in beer vary by state-by-state and region-by-region.  Some people enjoy bitter stout/IPA brews while others prefer a softer/pale brew.  To investigate look for trends, CDS developed a dual bar graph comparing median alcohol content (ABV) vs median bitterness units (IBU) by state Figure 1.4.  Visual inspection of the data does not appear to show any correlation between alcohol content and bitterness units.  Also, there is no visual evidence to suggest that different regions with the US have a propensity to a certain level of alcohol and/or bitterness in their craft beers. Note:  there were many IBU observations missing (1005) from the dataset.  Please use caution when interpreting these results.  
@@ -164,18 +163,16 @@ Medians.By.State$IBU <- aggregate(BrewMerged$IBU, list(BrewMerged$State), median
 
 BrewMedians <- tidyr::gather(Medians.By.State, "Category", "Value", 2:3)
 
-ggplot(BrewMedians, aes(x = Category, y = Value)) + 
-  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ State)
+#ggplot(BrewMedians, aes(x = Category, y = Value)) + 
+#  geom_bar(stat = 'identity', position = 'stack') + facet_grid(~ State)
 
 Medians.By.State <- Medians.By.State[order(Medians.By.State$IBU),]
 
-ggplot(Medians.By.State, aes(x = State, y = IBU)) + 
+#ggplot(Medians.By.State, aes(x = State, y = IBU)) + 
   #geom_bar(stat = 'identity') +
-  geom_line(aes(x=State, y=ABV*max(Medians.By.State$IBU)),stat="identity")
+#  geom_line(aes(x=State, y=ABV*max(Medians.By.State$IBU)),stat="identity")
 
 
-#class(BrewbyState)
-#major_count[ order(major_count$freq),]
 
 Breweries.By.State <- as.data.frame(BrewbyState)
 colnames(Breweries.By.State) <- c('State', 'Count')
@@ -229,26 +226,25 @@ grid.arrange(gg1,gg.mid,gg2,ncol=3,widths=c(4/9,1/9,4/9))
 Many states regulate the maximum alcohol content in beers brewed and sold in their state.  The state with the highest alcohol craft brew is Colorado [Lee Hill Series Vol.5 - Belgian Style Quadrupel Ale] with an ABV of 12.8%.  
 The state with the most bitter (IBU) craft brew is Oregon [Bitter Bitch Imperial IPA] with a IBU of 138.
 
-```{r,maxvalues}
+```{r maxvalues}
 
 ## 5. Which state has the maximum alcoholic (ABV) beer? Which state 
 ##  has the most bitter (IBU) beer?
 ABVmax <- BrewMerged[ which.max(BrewMerged$ABV), ]
-kable(ABVmax[,c(4,2,5,7)], align="c", title = "State with Maximum alcohol content (ABV) beer",format="markdown")
+kable(ABVmax[,c(4,2,5,7)], align="c", caption = "State with Maximum alcohol content (ABV) beer",format="markdown",row.names = FALSE)
 
-#print("State with Maximum International Bitterness Units beer (IBU)")
 IBUmax <- BrewMerged[ which.max(BrewMerged$IBU), ]
-kable(IBUmax[,c(4,2,5,8)], align="c", caption = "State with Maximum International Bitterness Unit (IBU) beer",format="markdown")
+kable(IBUmax[,c(4,2,5,8)], align="c", caption = "State with Maximum International Bitterness Unit (IBU) beer",format="markdown",row.names = FALSE)
 ```
 The level of alcohol varies from brew to brew, but the ABV level of most commercial brews averages 4-12%, compared to 15-20% for wine, and 35-50% for vodka.  A summary statistic was performed on the ABV content for all craft brews in our dataset (Table 1.6).  The mean ABV is 5.97% by volume with and interquartile range of [5.0%, 6.7%].
 
-```{r, summarystatistics}
+```{r summarystatistics}
 summary(BrewMerged$ABV)
 ```
 
 We wanted to investigate if there is an apparent relationship between the bitterness of a beer and its alcohol content (Fig 1.7). A visual inspection of a scatter plot of ABV vs IBU does appear to have a positive correlation between IBU and ABV. Higher content alcohol craft brews tend to have higher bitterness ratings.  Note:  there were many IBU observations missing (1005) from the dataset.  Please use caution when interpreting these results.
 
-```{r, scatterplot}
+```{r scatterplot}
 
 ## 7. Is there an apparent relationship between the bitterness of the 
 ##  beer and its alcoholic content? Draw a scatter plot.
@@ -257,8 +253,38 @@ ggplot(BrewMerged, aes(IBU, ABV))+ geom_point() + geom_smooth(method=lm,  se=FAL
 ```
 
 Guilty Pleasure Investment Fund consulted CDS to gather, clean and summarize data sets that were presented to CDS by Lifestyle Investments, containing Brewery and Beer data from US breweries, to assist GPIF in developing strategies and market plans focused on investing in craft breweries within the US.  
-Using tidy data techniques and statistical software, CDI combined, cleaned and summarize the datasets, using statistical measures, summaries, and data visualization techniques.  The data analysis was only a preliminary review, to assist GPIF in identifying the next step(s) in their process of identifying and selecting possible investment strategies.  The preliminary findings suggest West Coast and Northeast US tend to have a higher concentration of craft breweries, while Colorado has the most breweries for any state.  With a high concentration of craft breweries and increasing population, these regions and the state of Colorado warrant additional, more in-depth investigations as a first step in finding investment grade opportunities in the craft brew market.
+Using tidy data techniques and statistical software, CDI combined, cleaned and summarize the datasets, using statistical measures, summaries, and data visualization techniques.  The data analysis was only a preliminary review, to assist GPIF in identifying the next step(s) in their process of identifying and selecting possible investment strategies.  
+The preliminary findings suggest West Coast and Northeast US tend to have a higher concentration of craft breweries, while Colorado has the most breweries for any state.  CDS has provided a table (Table 1.7) and graphical map (Fig. 1.7) of the States with more than 20 craft breweries. With a high concentration of craft breweries and increasing population, these regions and the state of Colorado warrant additional, more in-depth investigations as a first step in finding investment grade opportunities in the craft brew market.
+```{r MoreThan20Brew}
+## Conclusion ##
 
+BrewMapTarget <- subset(BrewMap, Breweries >= 20)
+
+# States with 20 or more Breweries
+kable(BrewMapTarget[,c(1,2,5)], align="c", caption = "Table 1.7 States with 20\n or more Breweries",format="markdown",row.names = FALSE)
+```
+
+```{r TargetMap}
+# Creates a segmented map of United States, displaying states with greater
+# than 20 breweries 
+MapTarget <- ggplot(BrewMapTarget, aes(map_id = region))+ 
+  
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = Breweries), map = fifty_states) + 
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) + 
+  scale_y_continuous(breaks = NULL) +
+  labs(fill = "Brewery\nQuantity",
+       title = "           Fig 1.7 Targeted States\n                with >20 Breweries",
+       x = "",
+       y = "") +
+  scale_fill_continuous(low = "orange", high = "darkred", guide="colorbar")+
+  theme(legend.position = "bottom", 
+        panel.background = element_blank())
+# Plots Map
+MapTarget
+```
 
 
 
