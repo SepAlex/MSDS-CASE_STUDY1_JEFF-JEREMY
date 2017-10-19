@@ -54,6 +54,7 @@ library(mapproj)
 library(tidyr)
 library(grid)
 library(gridExtra)
+library(kableExtra)
 
 ## Initialize Directories
 #setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
@@ -73,9 +74,12 @@ colnames(Brew) <- c("Brewery_id","Brewery Name","City","State")
 ## 1. How many breweries are present in each state?
 
 BrewbyState <- table(Brew$State)
-BrewbyState
-#colnames(BrewbyState) <- c("State","Quantity")
+BrewbyStateS <- as.data.frame(BrewbyState)
+colnames(BrewbyStateS) <- c("State","Quantity")
 #kable(BrewbyState, align="c", padding=0, caption = "Quantity of Breweries by State",format="markdown")
+kable(BrewbyStateS, format = "Rmarkdown", caption = "Demo table", booktabs = T) %>%
+kable_styling(latex_options = c("striped", "scale_down"),full_width = F)
+
 ```
 Visualization of the data introduces another dimension to the data.  Figure 1.1 Breweries by State is a color-coded map, displaying the number of breweries in each state by varying shades of coloring.  As you can see from the map, the West Coast, and Northeast US, have the most craft breweries, with Colorado and Texas being outliers in the Western and Southern regions.  Further breakdowns, by US regions are available if requested.  
 ```{r, USmap, warning=FALSE}
