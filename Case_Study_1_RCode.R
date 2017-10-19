@@ -99,7 +99,9 @@ kable(head(BrewMerged,6), align="c", caption = "Last 6 Observation of BrewMerged
 
 ## 3. Report the number of NA's in each column.
 
-apply(apply(BrewMerged, 2, is.na), 2, sum)
+NAs <- as.data.frame(apply(apply(BrewMerged, 2, is.na), 2, sum))
+colnames(NAs) <- "Missing Values"
+kable(NAs, align="c", caption = "Table 1.3 Number of Missing observations",format="markdown")
 
 ## 4. Compute the median alcohol content and international bitterness 
 ##  unit for each state. Plot a bar chart to compare.
@@ -176,13 +178,14 @@ gg.mid <- ggplot_gtable(ggplot_build(g.mid))
 grid.arrange(gg1,gg.mid,gg2,ncol=3,widths=c(4/9,1/9,4/9))
 
 
-
 ## 5. Which state has the maximum alcoholic (ABV) beer? Which state 
 ##  has the most bitter (IBU) beer?
+ABVmax <- BrewMerged[ which.max(BrewMerged$ABV), ]
+kable(ABVmax[,c(4,2,5,7)], align="c", caption = "State with Maximum alcohol content (ABV) beer",format="markdown")
 
-BrewMerged[ which.max(BrewMerged$ABV), ]$State
-
-BrewMerged[ which.max(BrewMerged$IBU), ]$State
+#print("State with Maximum International Bitterness Units beer (IBU)")
+IBUmax <- BrewMerged[ which.max(BrewMerged$IBU), ]
+kable(IBUmax[,c(4,2,5,8)], align="c", caption = "State with Maximum International Bitterness Unit (IBU) beer",format="markdown")
 
 
 ## 6. Summary statistics for the ABV variable.

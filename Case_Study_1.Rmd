@@ -5,8 +5,9 @@ date: "October 23, 2017"
 output: html_document
 ---
 
-```{r setup, include=FALSE, warning=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
 ```
 #### Project Name: MicBrew
 #### Client: Lifestyle Investments
@@ -114,7 +115,6 @@ Mapplot
 ```
 
 CDS merged the datasets together, to get a more robust dataset, which includes information about brewery, location, beers produced, alcohol content (ABV), bitterness (IBU), style, size (ounces). For quality control purposes, the first six rows (Table 1.2a) of and the last six rows (Table 1.2b) of the combined dataset are displayed below.  
-### Table 1.2a BrewMerged Dataset First 6 Observations"
 
 ```{r, mergeddataset}
 ################################################
@@ -125,11 +125,11 @@ CDS merged the datasets together, to get a more robust dataset, which includes i
 BrewMerged <- merge(Brew,Beers, by="Brewery_id",all=TRUE)
 
 # First 6 Brewery Observations
-kable(head(BrewMerged,6), align="c", caption = "Table 1.2a BrewMerged Dataset First 6 Observations",format="html")
+kable(head(BrewMerged,6), align="c", caption = "Table 1.2a BrewMerged Dataset First 6 Observations",format="markdown")
 ```
 ```{r, last6}
 # Last 6 Brewery Observations
-kable(head(BrewMerged,6), align="c", caption = "Last 6 Observation of BrewMerged Dataframe",format="markdown")
+kable(head(BrewMerged,6), align="c", caption = "Table 1.2b BrewMerged Dataset Last 6 Observations",format="markdown")
 ```
 
 A check of the dataset's robustness/completeness was conducted.  Table 1.3 list each variable and the number of NA (Not Available/missing) data points is listed.  Most of the variables have no missing data. ABV (alcohol content) has 62 missing values while IBU (bitterness units) has 1005 missing values.   Bitterness units is not a typically used criteria in the US, which might explain the large number of missing values.  Any analysis using IBU must be viewed with caution.  
@@ -138,7 +138,9 @@ A check of the dataset's robustness/completeness was conducted.  Table 1.3 list 
 
 ## 3. Report the number of NA's in each column.
 
-apply(apply(BrewMerged, 2, is.na), 2, sum)
+NAs <- as.data.frame(apply(apply(BrewMerged, 2, is.na), 2, sum))
+colnames(NAs) <- "Missing Values"
+kable(NAs, align="c", caption = "Table 1.3 Number of Missing observations",format="markdown")
 ```
 
 Consumers taste in beer vary by state-by-state and region-by-region.  Some people enjoy bitter stout/IPA brews while others prefer a softer/pale brew.  To investigate look for trends, CDS developed a dual bar graph comparing median alcohol content (ABV) vs median bitterness units (IBU) by state Figure 1.4.  Visual inspection of the data does not appear to show any correlation between alcohol content and bitterness units.  Also, there is no visual evidence to suggest that different regions with the US have a propensity to a certain level of alcohol and/or bitterness in their craft beers. Note:  there were many IBU observations missing (1005) from the dataset.  Please use caution when interpreting these results.  
@@ -227,10 +229,12 @@ The state with the most bitter (IBU) craft brew is Oregon [Bitter Bitch Imperial
 
 ## 5. Which state has the maximum alcoholic (ABV) beer? Which state 
 ##  has the most bitter (IBU) beer?
+ABVmax <- BrewMerged[ which.max(BrewMerged$ABV), ]
+kable(ABVmax[,c(4,2,5,7)], align="c", title = "State with Maximum alcohol content (ABV) beer",format="markdown")
 
-BrewMerged[ which.max(BrewMerged$ABV), ]$State
-
-BrewMerged[ which.max(BrewMerged$IBU), ]$State
+#print("State with Maximum International Bitterness Units beer (IBU)")
+IBUmax <- BrewMerged[ which.max(BrewMerged$IBU), ]
+kable(IBUmax[,c(4,2,5,8)], align="c", caption = "State with Maximum International Bitterness Unit (IBU) beer",format="markdown")
 ```
 The level of alcohol varies from brew to brew, but the ABV level of most commercial brews averages 4-12%, compared to 15-20% for wine, and 35-50% for vodka.  A summary statistic was performed on the ABV content for all craft brews in our dataset (Table 1.6).  The mean ABV is 5.97% by volume with and interquartile range of [5.0%, 6.7%].
 
@@ -247,6 +251,9 @@ We wanted to investigate if there is an apparent relationship between the bitter
 
 ggplot(BrewMerged, aes(IBU, ABV))+ geom_point() + geom_smooth(method=lm,  se=FALSE) 
 ```
+
+Guilty Pleasure Investment Fund consulted CDS to gather, clean and summarize data sets that were presented to CDS by Lifestyle Investments, containing Brewery and Beer data from US breweries, to assist GPIF in developing strategies and market plans focused on investing in craft breweries within the US.  
+Using tidy data techniques and statistical software, CDI combined, cleaned and summarize the datasets, using statistical measures, summaries, and data visualization techniques.  The data analysis was only a preliminary review, to assist GPIF in identifying the next step(s) in their process of identifying and selecting possible investment strategies.  The preliminary findings suggest West Coast and Northeast US tend to have a higher concentration of craft breweries, while Colorado has the most breweries for any state.  With a high concentration of craft breweries and increasing population, these regions and the state of Colorado warrant additional, more in-depth investigations as a first step in finding investment grade opportunities in the craft brew market.
 
 
 
