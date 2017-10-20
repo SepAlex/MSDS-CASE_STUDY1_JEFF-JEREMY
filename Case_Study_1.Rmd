@@ -48,17 +48,14 @@ The project CODEBOOK contains a more detailed descriptive listing of the variabl
 ## 2017/10/14
 ## This code will answer the following 7 questions:
 ## 1. How many breweries are present in each state?
-## 2. Merge beer data with the breweries data. Print the first 6 
-##  observations and the last six observations to check the merged file. 
+## 2. Merge beer data with the breweries data. Print the first 6 observations and the last six observations to check the merged file. 
 ## 3. Report the number of NA's in each column.
-## 4. Compute the median alcohol content and international bitterness 
-##  unit for each state. Plot a bar chart to compare.
-## 5. Which state has the maximum alcoholic (ABV) beer? Which state 
-##  has the most bitter (IBU) beer?
+## 4. Compute the median alcohol content and international bitterness unit for each state. Plot a bar chart to compare.
+## 5. Which state has the maximum alcoholic (ABV) beer? Which state has the most bitter (IBU) beer?
 ## 6. Summary statistics for the ABV variable.
-## 7. Is there an apparent relationship between the bitterness of the 
-##  beer and its alcoholic content? Draw a scatter plot.
+## 7. Is there an apparent relationship between the bitterness of the beer and its alcoholic content? Draw a scatter plot.
 ########################################################
+
 ## Initialize Directories
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 ```
@@ -246,9 +243,8 @@ grid.arrange(gg1,gg.mid,gg2,ncol=3,widths=c(4/9,1/9,4/9))
 
 
 ```{r maxvalues}
+## 5. Which state has the maximum alcoholic (ABV) beer? Which state has the most bitter (IBU) beer?
 
-## 5. Which state has the maximum alcoholic (ABV) beer? Which state 
-##  has the most bitter (IBU) beer?
 ABVmax <- BrewMerged[ which.max(BrewMerged$ABV), ]
 kable(ABVmax[,c(4,2,5,7)], align="c", caption = "State with Maximum alcohol content (ABV) beer",format="markdown",row.names = FALSE)
 ```
@@ -274,11 +270,13 @@ summary(BrewMerged$ABV)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We wanted to investigate if there is an apparent relationship between the bitterness of a beer and its alcohol content (Fig 1.7). A visual inspection of a scatter plot of ABV vs IBU does appear to have a positive correlation between IBU and ABV. Higher content alcohol craft brews tend to have higher bitterness ratings.  Note:  there were many IBU observations missing (1005) from the dataset.  Please use caution when interpreting these results.
 
 ```{r scatterplot}
+## 7. Is there an apparent relationship between the bitterness of the beer and its alcoholic content? Draw a scatter plot.
 
-## 7. Is there an apparent relationship between the bitterness of the 
-##  beer and its alcoholic content? Draw a scatter plot.
-
-ggplot(BrewMerged, aes(IBU, ABV))+ geom_point() + geom_smooth(method=lm,  se=FALSE) 
+ggplot(BrewMerged, aes(IBU, ABV))+ 
+  ggtitle("Alcohol Content (ABV) vs Bitterness Units (IBU)")+
+  geom_point(color="darkorange") + 
+  geom_smooth(method=lm,  se=FALSE, color="darkred") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 : Figure 1.7 (Scatterplot comparing alcohol content (ABV) vs bitterness units (IBU))
 
