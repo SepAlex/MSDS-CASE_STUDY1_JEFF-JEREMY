@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(warning = FALSE)
 
 ```
-### Project Name: MicBrew
+### Project Name: LI Brew Crawl
 ### Client: Lifestyle Investments
 #### Project Description: Preliminary Data Analysis  
 
@@ -55,7 +55,6 @@ The project CODEBOOK contains a more detailed descriptive listing of the variabl
 ## 6. Summary statistics for the ABV variable.
 ## 7. Is there an apparent relationship between the bitterness of the beer and its alcoholic content? Draw a scatter plot.
 ########################################################
-
 ## Initialize Directories
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 ```
@@ -81,10 +80,6 @@ colnames(Brew) <- c("Brewery_id","Brewery Name","City","State")
 
 BrewbyState <- table(Brew$State)
 BrewbyState
-
-#BrewbyStateS <- as.data.frame(BrewbyState)
-#colnames(BrewbyStateS) <- c("State","Quantity")
-#kable(BrewbyStateS, align="c", caption = "Table 1.1 Quantity of Brew by State",format="markdown")
 
 ```
 
@@ -278,22 +273,23 @@ ggplot(BrewMerged, aes(IBU, ABV))+
   geom_smooth(method=lm,  se=FALSE, color="darkred") +
   theme(plot.title = element_text(hjust = 0.5))
 ```
-: Figure 1.7 (Scatterplot comparing alcohol content (ABV) vs bitterness units (IBU))
+: Figure 1.7 Scatterplot comparing alcohol content (ABV) vs bitterness units (IBU)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Guilty Pleasure Investment Fund consulted CDS to gather, clean and summarize data sets that were presented to CDS by Lifestyle Investments, containing Brewery and Beer data from US breweries, to assist GPIF in developing strategies and market plans focused on investing in craft breweries within the US.  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Using tidy data techniques and statistical software, CDI combined, cleaned and summarize the datasets, using statistical measures, summaries, and data visualization techniques.  The data analysis was only a preliminary review, to assist GPIF in identifying the next step(s) in their process of identifying and selecting possible investment strategies.  
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The preliminary findings suggest West Coast and Northeast US tend to have a higher concentration of craft breweries, while Colorado has the most breweries for any state.  CDS has provided a table (Table 1.7) and graphical map (Fig. 1.7) of the States with more than 20 craft breweries. With a high concentration of craft breweries and increasing population, these regions and the state of Colorado warrant additional, more in-depth investigations as a first step in finding investment grade opportunities in the craft brew market.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The preliminary findings suggest West Coast and Northeast US tend to have a higher concentration of craft breweries, while Colorado has the most breweries for any state.  CDS has provided a table (Table 1.8) and graphical map (Fig. 1.8) of the States with more than 20 craft breweries. With a high concentration of craft breweries and increasing population, these regions and the state of Colorado warrant additional, more in-depth investigations as a first step in finding investment grade opportunities in the craft brew market.
+
 ```{r MoreThan20Brew}
 ## Conclusion ##
 
 BrewMapTarget <- subset(BrewMap, Breweries >= 20)
 
 # States with 20 or more Breweries
-kable(BrewMapTarget[,c(1,2,5)], align="c", caption = "Table 1.7 States with 20\n or more Breweries",format="markdown",row.names = FALSE)
+kable(BrewMapTarget[,c(1,2,5)], align="c", caption = "Table 1.8 States with More than 20 Breweries",format="markdown",row.names = FALSE)
 ```
-
+: Table 1.8 - States with More than 20 or more Breweries
 ```{r TargetMap}
 # Creates a segmented map of United States, displaying states with greater
 # than 20 breweries 
@@ -306,12 +302,14 @@ MapTarget <- ggplot(BrewMapTarget, aes(map_id = region))+
   scale_x_continuous(breaks = NULL) + 
   scale_y_continuous(breaks = NULL) +
   labs(fill = "Brewery\nQuantity",
-       title = "           Fig 1.7 Targeted States\n                with >20 Breweries",
+       title = "Fig 1.8 Targeted States\nwith >20 Breweries",
        x = "",
        y = "") +
   scale_fill_continuous(low = "orange", high = "darkred", guide="colorbar")+
   theme(legend.position = "bottom", 
-        panel.background = element_blank())
+        panel.background = element_blank(),
+        plot.title = element_text(hjust = 0.5)
+        )
 # Plots Map
 MapTarget
 ```
