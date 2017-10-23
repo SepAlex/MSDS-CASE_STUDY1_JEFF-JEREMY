@@ -16,7 +16,8 @@ knitr::opts_chunk$set(warning = FALSE)
 ```
 ### Project Name: LI Brew Crawl
 ### Client: Lifestyle Investments
-#### Project Description: Preliminary Data Analysis  
+#### Project Description: Preliminary Data Analysis
+##### GitHub Repository: https://github.com/jlubich/MSDS-CASE_STUDY1_JEFF-JEREMY
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lifestyle Investments, the investment arm of Premium Venture Capital, contracted Century Data Solutions (CDS) to assist them with a conducting preliminary data gathering and analysis for one of their planned investment funds (Guilty Pleasures Fund). 
 
@@ -26,13 +27,13 @@ knitr::opts_chunk$set(warning = FALSE)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The purpose of this consultancy agreement was to gather, clean and summarize data sets that was presented to CDS by Lifestyle Investments, which contained Brewery and Beer data from US breweries, to assist GPIF in developing strategies and market plans focused on investing in craft breweries within the US.  
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GPIF presented CDS with 2 initial data sets relating to the is project.  The original source of the datasets is unknown.  The original dataset was obtained by GPIF from Openbeerdb.com https://openbeerdb.com/ .  The databases were made available under the Open Database License agreement. Note: The original databases were altered by GPIF prior to submission to CDS.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GPIF presented CDS with 2 initial data sets relating to the is project.  The original source of the datasets is unknown.  The original dataset was obtained by GPIF from [Openbeerdb.com](https://openbeerdb.com/).  The databases were made available under the Open Database License agreement. Note: The original databases were altered by GPIF prior to submission to CDS.  
 
 **Datasets **
   
 * **Beers dataset:** The Beers dataset contains a list of 2410 US craft beers currently being produced in the US, along with other pertinent data (Beer ID, Alcohol content (ABV), International Bitterness Units (IBU), Brewery ID, Style, and Ounces).  
 * **Breweries dataset:** The Breweries dataset contains a list of 558 craft beer Breweries in the US, along with other pertinent data (Brew_ID, City and State of headquarters).
-The project CODEBOOK contains a more detailed descriptive listing of the variables used.  
+The project [CODEBOOK](https://github.com/jlubich/MSDS-CASE_STUDY1_JEFF-JEREMY/blob/master/CodeBook.md) contains a more detailed descriptive listing of the variables used.  
 
 #### Project: MicBrew  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For reproducibility across a wide variety of computer operating platforms, CDS chose R as the preferred statistical software environment to gather, clean and summarize data sets that was presented to CDS by Lifestyle Investments.  
@@ -42,19 +43,6 @@ The project CODEBOOK contains a more detailed descriptive listing of the variabl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;First, we used the Breweries dataset and developed a summary table listing the number of breweries in each state.  As seen in the Table 1.1 Breweries by State, there is a wide range of number of breweries by state. Colorado leads the way with 47 breweries with California a distant 2nd with 39.  Several states only had 1 brewery.
 
 ```{r DirectorySet, eval=FALSE}
-#########################################################
-## DDS - Case Study 1
-## Jeffrey Lancon & Jeremy Lubich
-## 2017/10/14
-## This code will answer the following 7 questions:
-## 1. How many breweries are present in each state?
-## 2. Merge beer data with the breweries data. Print the first 6 observations and the last six observations to check the merged file. 
-## 3. Report the number of NA's in each column.
-## 4. Compute the median alcohol content and international bitterness unit for each state. Plot a bar chart to compare.
-## 5. Which state has the maximum alcoholic (ABV) beer? Which state has the most bitter (IBU) beer?
-## 6. Summary statistics for the ABV variable.
-## 7. Is there an apparent relationship between the bitterness of the beer and its alcoholic content? Draw a scatter plot.
-########################################################
 ## Initialize Directories
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 ```
@@ -289,7 +277,7 @@ BrewMapTarget <- subset(BrewMap, Breweries >= 20)
 # States with 20 or more Breweries
 kable(BrewMapTarget[,c(1,2,5)], align="c", caption = "Table 1.8 States with More than 20 Breweries",format="markdown",row.names = FALSE)
 ```
-: Table 1.8 - States with More than 20 or more Breweries
+: Table 1.8 - States with 20 or more Breweries
 ```{r TargetMap}
 # Creates a segmented map of United States, displaying states with greater
 # than 20 breweries 
@@ -302,7 +290,7 @@ MapTarget <- ggplot(BrewMapTarget, aes(map_id = region))+
   scale_x_continuous(breaks = NULL) + 
   scale_y_continuous(breaks = NULL) +
   labs(fill = "Brewery\nQuantity",
-       title = "Fig 1.8 Targeted States\nwith >20 Breweries",
+       title = "Fig 1.8 States with 20 or more\n Breweries",
        x = "",
        y = "") +
   scale_fill_continuous(low = "orange", high = "darkred", guide="colorbar")+
